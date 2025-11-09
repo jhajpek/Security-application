@@ -1,0 +1,84 @@
+<!DOCTYPE html>
+<html lang="hr" xmlns:th="http://www.w3.org/1999/xhtml" xmlns:sec="http://www.w3.org/1999/xhtml">
+<head>
+    <meta charset="UTF-8">
+    <title>Početna</title>
+    <link rel="stylesheet" th:href="@{/css/styles.css}">
+</head>
+<body>
+    <header>
+        <h1>SecurityApp</h1>
+        <div sec:authorize="isAuthenticated()">
+            <span th:text="|Dobrodošli, ${username}|"></span>
+            <a href="/logout">Odjava</a>
+        </div>
+    </header>
+
+    <form sec:authorize="!isAuthenticated()"
+          th:action="@{/login}" method="post" th:object="${login}"
+          class="form-section" id="login-form" style="display: block;">
+        <label class="form-label">
+            <strong>Korisničko ime ili email:</strong>
+            <input type="text" th:field="*{usernameOrEmail}" required class="form-input"/>
+        </label>
+        <label class="form-label">
+            <strong>Lozinka:</strong>
+            <input type="password" th:field="*{rawPassword}" required class="form-input"/>
+        </label>
+        <label class="form-label">
+            <strong>Omogući SQL umetanje:</strong>
+            <input type="checkbox" th:field="*{sqlInjectionFlag}"/>
+        </label>
+        <label class="form-label">
+            <strong>Omogući Lošu autentifikaciju:</strong>
+            <input type="checkbox" th:field="*{brokenAuthFlag}"/>
+        </label>
+
+        <p th:if="${errMsg != null}" th:text="${errMsg}" class="error-message"></p>
+
+        <div class="btn-center">
+            <button type="submit" class="btn-inner">Prijavi se.</button>
+        </div>
+    </form>
+
+    <form sec:authorize="!isAuthenticated()"
+          th:action="@{/register}" method="post" th:object="${registration}"
+          class="form-section" id="register-form" style="display: none;">
+        <label class="form-label">
+            <strong>Korisničko ime:</strong>
+            <input type="text" th:field="*{username}" required class="form-input"/>
+        </label>
+        <label class="form-label">
+            <strong>Email:</strong>
+            <input type="email" th:field="*{email}" required class="form-input"/>
+        </label>
+        <label class="form-label">
+            <strong>Lozinka:</strong>
+            <input type="password" th:field="*{rawPassword}" required class="form-input"/>
+        </label>
+        <label class="form-label">
+            <strong>Ponovljena lozinka:</strong>
+            <input type="password" th:field="*{rawPassword2}" required class="form-input"/>
+        </label>
+
+        <p th:if="${errMsg != null}" th:text="${errMsg}" class="error-message"></p>
+
+        <div class="btn-center">
+            <button type="submit" class="btn-inner">Registriraj se.</button>
+        </div>
+    </form>
+
+    <div class="btn-center" sec:authorize="!isAuthenticated()">
+        <button type="button" class="btn-inner" id="toggle-forms">Nemaš račun? Registriraj se.</button>
+    </div>
+
+    <section sec:authorize="isAuthenticated()" class="form-section">
+        <h2>Ako ste se prijavili uz opciju loše autentifikacije, sadržaj kolačića je dostupan kroz JavaScript.</h2>
+        <h2>Ovo se brzo može isprobati u browseru pomoću DevTools-a(Ctrl + Shift + i) pod Console.</h2>
+        <h2>U slučaju prijave s tom opcijom, u konzolu upišite document.cookie i ispisat će se sadržaj kolačića.</h2>
+        <h2>U slučaju prijave bez te opcije, ista naredba vraća prazan string.</h2>
+    </section>
+
+    <script th:src="@{/js/app.js}"></script>
+</body>
+</html>
